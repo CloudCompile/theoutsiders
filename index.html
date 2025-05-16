@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>The Outsiders Chat</title>
+  <style>
+    body {
+      font-family: 'Courier New', monospace;
+      background: #111;
+      color: #f2f2f2;
+      padding: 20px;
+    }
+    select, input, button {
+      font-family: inherit;
+      font-size: 1em;
+      padding: 0.5em;
+      margin: 0.5em 0;
+      background: #222;
+      color: #fff;
+      border: 1px solid #444;
+      border-radius: 4px;
+    }
+    #chat {
+      max-height: 400px;
+      overflow-y: auto;
+      background: #000;
+      padding: 10px;
+      border: 1px solid #444;
+      margin-top: 1em;
+    }
+    .user { color: #0f0; }
+    .ai { color: #0af; }
+  </style>
+</head>
+<body>
+  <h1>Talk to a Character from The Outsiders</h1>
+  <label for="character">Choose a character:</label>
+  <select id="character">
+    <!-- Greasers -->
+    <option value="Ponyboy Curtis">Ponyboy</option>
+    <option value="Johnny Cade">Johnny</option>
+    <option value="Dallas Winston">Dally</option>
+    <option value="Sodapop Curtis">Sodapop</option>
+    <option value="Two-Bit Mathews">Two-Bit</option>
+    <option value="Darrel Curtis">Darry</option>
+    <option value="Steve Randle">Steve Randle</option>
+
+    <!-- Socs -->
+    <option value="Cherry Valance">Cherry Valance</option>
+    <option value="Bob Sheldon">Bob Sheldon</option>
+    <option value="Randy Adderson">Randy Adderson</option>
+  </select>
+  <br>
+  <input type="text" id="input" placeholder="Say something...">
+  <button onclick="send()">Send</button>
+  <div id="chat"></div>
+
+  <script>
+    const chat = document.getElementById("chat");
+    const input = document.getElementById("input");
+    const character = document.getElementById("character");
+
+    async function send() {
+      const msg = input.value;
+      if (!msg) return;
+
+      const charName = character.value;
+      chat.innerHTML += `<div class="user"><strong>You:</strong> ${msg}</div>`;
+      input.value = "";
+      chat.scrollTop = chat.scrollHeight;
+
+      const prompt = `Stay in character as ${charName} from *The Outsiders*. Speak in their voice. Answer the user in 1-3 sentences. Immersive roleplay. Take them deep into the world of *The Outsiders*. Be as descriptive as possible. Make it seem like the world is real. User: ${msg}\n${charName}:`;
+
+      const res = await fetch(`https://text.pollinations.ai/prompt/${encodeURIComponent(prompt)}`);
+      const text = await res.text();
+
+      chat.innerHTML += `<div class="ai"><strong>${charName}:</strong> ${text.trim()}</div>`;
+      chat.scrollTop = chat.scrollHeight;
+    }
+
+    input.addEventListener("keydown", e => {
+      if (e.key === "Enter") send();
+    });
+  </script>
+</body>
+</html>
